@@ -3,8 +3,8 @@ SQLite browser data-access layer.
 
 A thin, testable wrapper around a single ``sqlite3.Connection`` that powers the
 web UI. The connection is kept open with an *explicit* transaction so the app
-can offer DB Browser for SQLite style "pending changes": edits are staged and
-either written (COMMIT) or reverted (ROLLBACK).
+can offer "pending changes": edits are staged and either written (COMMIT) or
+reverted (ROLLBACK).
 
 Everything UI-facing returns plain JSON-able dicts/lists so ``server.py`` stays
 a thin HTTP shim. No Flask imports here on purpose - this module is unit-tested

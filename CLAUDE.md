@@ -68,10 +68,9 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 # SQLite Browser — Project Notes
 
-A local, web-based SQLite database manager (inspired by DB Browser for SQLite /
-sqlitebrowser.org). View tables, run SQL, bulk-edit data, manage schema, import/
-export, and back up `.db` files from the browser. **Single-user, localhost only,
-no authentication** by design.
+A local, web-based SQLite database manager. View tables, run SQL, bulk-edit
+data, manage schema, import/export, and back up `.db` files from the browser.
+**Single-user, localhost only, no authentication** by design.
 
 ## How to run
 

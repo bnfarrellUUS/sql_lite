@@ -2,7 +2,7 @@
 
 A local, web-based SQLite database manager — view tables, run SQL, bulk-edit
 data, manage schema, import/export, and back up `.db` files, all from your
-browser. Inspired by [DB Browser for SQLite](https://sqlitebrowser.org/).
+browser.
 
 **Single-user, localhost only, no authentication** — it's a desktop-style tool
 for managing database files on your own machine.
@@ -26,8 +26,8 @@ for managing database files on your own machine.
 - **Backup / Restore** — one-click backups, plus an automatic backup before any
   destructive operation.
 - **Pending changes** — edits are staged in a transaction; click **Write
-  Changes** to commit or **Revert** to roll back (mirrors DB Browser for
-  SQLite). A backup is taken automatically before every commit.
+  Changes** to commit or **Revert** to roll back. A backup is taken
+  automatically before every commit.
 
 ## Requirements
 
