@@ -21,6 +21,7 @@ if exist dist rmdir /s /q dist
 echo Building SQLiteBrowser.exe (this can take a minute)...
 python -m PyInstaller --noconfirm --onefile --windowed ^
   --name SQLiteBrowser ^
+  --icon icon.ico ^
   --add-data "static;static" ^
   --exclude-module pytest ^
   desktop.py
