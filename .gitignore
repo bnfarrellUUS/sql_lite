@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Runtime data — never commit user databases or generated files
+*.db
+*.sqlite
+*.sqlite3
+*.db3
+app_meta.sqlite
+backups/
+uploads/
+
+# Tooling / scratch
+.playwright-mcp/
+*.log

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQLite Browser</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="brand">🗄️ SQLite Browser</div>
+    <div class="db-controls">
+      <button id="btn-open">Open Database</button>
+      <button id="btn-new-db">New Database</button>
+      <span id="current-db" class="current-db">No database open</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="write-controls">
+      <span id="dirty-badge" class="dirty-badge hidden">● Unsaved changes</span>
+      <button id="btn-backup" title="Save a timestamped copy of the file">Backup</button>
+      <button id="btn-write" class="primary" disabled>Write Changes</button>
+      <button id="btn-revert" disabled>Revert</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span>Database Structure</span>
+        <button id="btn-refresh" class="icon" title="Refresh">⟳</button>
+      </div>
+      <div id="tree" class="tree"></div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <nav class="tabs">
+        <button class="tab active" data-tab="structure">Structure</button>
+        <button class="tab" data-tab="browse">Browse Data</button>
+        <button class="tab" data-tab="sql">Execute SQL</button>
+        <button class="tab" data-tab="io">Import / Export</button>
+        <button class="tab" data-tab="backups">Backups</button>
+      </nav>
+
+      <!-- STRUCTURE TAB -->
+      <section class="panel active" id="panel-structure">
+        <div class="toolbar">
+          <button id="btn-new-table" class="primary">+ New Table</button>
+          <button id="btn-edit-table">Edit Table</button>
+          <button id="btn-drop-table" class="danger">Drop</button>
+          <span id="structure-target" class="muted"></span>
+        </div>
+        <div id="structure-detail" class="detail"></div>
+      </section>
+
+      <!-- BROWSE TAB -->
+      <section class="panel" id="panel-browse">
+        <div class="toolbar">
+          <label>Table:
+            <select id="browse-table"></select>
+          </label>
+          <button id="btn-add-row">+ Row</button>
+          <button id="btn-del-rows" class="danger">Delete Selected</button>
+          <button id="btn-bulk-edit">Bulk Edit Column</button>
+          <span class="spacer"></span>
+          <span id="browse-count" class="muted"></span>
+        </div>
+        <div id="browse-grid" class="grid-wrap"></div>
+        <div class="pager">
+          <button id="page-first">⏮</button>
+          <button id="page-prev">◀</button>
+          <span id="page-info"></span>
+          <button id="page-next">▶</button>
+          <button id="page-last">⏭</button>
+          <label class="pagesize">Rows/page:
+            <select id="page-size">
+              <option>100</option><option>500</option>
+              <option selected>1000</option><option>5000</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <!-- SQL TAB -->
+      <section class="panel" id="panel-sql">
+        <div class="toolbar">
+          <button id="btn-run-sql" class="primary">▶ Run (Ctrl+Enter)</button>
+          <button id="btn-save-query">Save Query</button>
+          <label>History:
+            <select id="history-select"><option value="">—</option></select>
+          </label>
+          <label>Saved:
+            <select id="saved-select"><option value="">—</option></select>
+          </label>
+          <button id="btn-del-saved" class="danger" title="Delete selected saved query">🗑</button>
+        </div>
+        <textarea id="sql-input" class="sql-input" spellcheck="false"
+          placeholder="SELECT * FROM ...;  -- Ctrl+Enter to run"></textarea>
+        <div id="sql-status" class="sql-status"></div>
+        <div id="sql-grid" class="grid-wrap"></div>
+      </section>
+
+      <!-- IMPORT/EXPORT TAB -->
+      <section class="panel" id="panel-io">
+        <div class="io-card">
+          <h3>Import CSV / Excel</h3>
+          <p class="muted">Load a file into a new or existing table.</p>
+          <div class="form-row"><label>File</label>
+            <input type="file" id="import-file" accept=".csv,.xlsx,.xls"></div>
+          <div class="form-row"><label>Destination table</label>
+            <input type="text" id="import-table" placeholder="table name"></div>
+          <div class="form-row"><label>Mode</label>
+            <select id="import-mode">
+              <option value="create">Create new (fail if exists)</option>
+              <option value="replace">Replace existing</option>
+              <option value="append">Append to existing</option>
+            </select></div>
+          <button id="btn-import" class="primary">Import</button>
+          <span id="import-status" class="muted"></span>
+        </div>
+        <div class="io-card">
+          <h3>Export</h3>
+          <p class="muted">Download a table or your last query result.</p>
+          <div class="form-row"><label>Source</label>
+            <select id="export-table"></select></div>
+          <div class="form-row"><label>Format</label>
+            <select id="export-format"><option value="csv">CSV</option>
+              <option value="xlsx">Excel (.xlsx)</option></select></div>
+          <button id="btn-export-table" class="primary">Export Table</button>
+          <button id="btn-export-query">Export Last Query Result</button>
+        </div>
+        <div class="io-card">
+          <h3>Download Database File</h3>
+          <p class="muted">Get the current .db file (useful after editing an upload).</p>
+          <button id="btn-download-db" class="primary">Download .db</button>
+        </div>
+      </section>
+
+      <!-- BACKUPS TAB -->
+      <section class="panel" id="panel-backups">
+        <div class="toolbar">
+          <button id="btn-make-backup" class="primary">Create Backup Now</button>
+          <span class="muted">Backups are auto-created before destructive operations.</span>
+        </div>
+        <div id="backups-list" class="detail"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal host -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal" id="modal"></div>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
