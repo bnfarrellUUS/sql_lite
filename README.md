@@ -50,6 +50,27 @@ Then open <http://localhost:5050>. Port 5050 is the default (chosen to avoid
 clashing with other local apps on 5000); override it with the `PORT` environment
 variable, e.g. `PORT=5060 python server.py`.
 
+## Desktop app (Windows .exe)
+
+The app can also run as a standalone desktop window — no Python install, no
+browser tab — using [pywebview](https://pywebview.flowrl.com/) (Windows
+WebView2) packaged into a single `.exe` with PyInstaller.
+
+- **Run the desktop window in dev:** `pip install pywebview` then
+  `python desktop.py`.
+- **Build the `.exe`:** `pip install pyinstaller`, then double-click
+  `build_exe.bat` (or run it from a terminal). The result is
+  `dist\SQLiteBrowser.exe`.
+
+Notes:
+
+- `SQLiteBrowser.exe` is a single-file build, so the **first launch is slow**
+  (it extracts to a temp folder) — subsequent launches are faster.
+- In the packaged app, user data (`backups/`, `uploads/`, `app_meta.sqlite`)
+  lives in `%LOCALAPPDATA%\SQLiteBrowser` so it persists across app updates.
+- Requires the Microsoft **Edge WebView2 runtime** — preinstalled on Windows 11;
+  on older Windows install the free "Evergreen" runtime from Microsoft.
+
 ## Project layout
 
 ```
@@ -61,7 +82,9 @@ static/
   style.css
 tests/test_db_service.py   pytest suite
 requirements.txt
-run_browser.bat      Windows launcher
+run_browser.bat      Windows launcher (browser)
+desktop.py           Desktop entry point (pywebview native window)
+build_exe.bat        Packages desktop.py into dist\SQLiteBrowser.exe
 ```
 
 Runtime files — your `.db`/`.sqlite` files, `backups/`, `uploads/`,

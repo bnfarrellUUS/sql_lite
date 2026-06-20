@@ -2,4 +2,8 @@
 Flask>=3.0
 pandas>=2.0
 openpyxl>=3.1
+pywebview>=5.0   # native desktop window (desktop.py / packaged .exe)
 pytest>=8.0
+
+# Build-only (not needed at runtime); install separately to package the .exe:
+#   pip install pyinstaller

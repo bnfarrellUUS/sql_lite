@@ -12,6 +12,11 @@ app_meta.sqlite
 backups/
 uploads/
 
+# PyInstaller build output (build_exe.bat regenerates the .spec each run)
+build/
+dist/
+*.spec
+
 # Tooling / scratch
 .playwright-mcp/
 *.log

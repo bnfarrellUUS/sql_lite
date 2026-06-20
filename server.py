@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import io
 import os
+import sys
 import traceback
 from datetime import datetime
 from pathlib import Path
@@ -31,19 +32,41 @@ from werkzeug.exceptions import HTTPException
 
 from db_service import DEFAULT_PAGE_SIZE, Database, DBError
 
-BASE_DIR = Path(__file__).resolve().parent
-STATIC_DIR = BASE_DIR / "static"
-UPLOAD_DIR = BASE_DIR / "uploads"
-BACKUP_DIR = BASE_DIR / "backups"
-META_PATH = BASE_DIR / "app_meta.sqlite"
+def _resource_dir() -> Path:
+    """Directory holding bundled read-only assets (``static/``). Under a frozen
+    PyInstaller build this is the temp extraction dir (``sys._MEIPASS``);
+    otherwise it's the source tree."""
+    if getattr(sys, "frozen", False):
+        return Path(sys._MEIPASS)
+    return Path(__file__).resolve().parent
 
-# Roots the "browse server files" picker is allowed to list. Defaults to the
-# project's parent (the user's claude_code workspace) plus the home directory.
-BROWSE_ROOTS = [
-    BASE_DIR,
-    BASE_DIR.parent,
-    Path.home(),
-]
+
+def _data_dir() -> Path:
+    """Directory for writable runtime files (uploads, backups, metadata). In a
+    frozen build the source dir is a temp folder that's deleted on exit, so use
+    ``%LOCALAPPDATA%\\SQLiteBrowser``; in dev it's the source tree (unchanged)."""
+    if getattr(sys, "frozen", False):
+        base = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "SQLiteBrowser"
+    else:
+        base = Path(__file__).resolve().parent
+    base.mkdir(parents=True, exist_ok=True)
+    return base
+
+
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = _resource_dir() / "static"
+DATA_DIR = _data_dir()
+UPLOAD_DIR = DATA_DIR / "uploads"
+BACKUP_DIR = DATA_DIR / "backups"
+META_PATH = DATA_DIR / "app_meta.sqlite"
+
+# Roots the "browse server files" picker is allowed to list. In a frozen build
+# the source dir is meaningless (temp extraction), so anchor on the exe's
+# location and the data dir; in dev, the project and its parent workspace.
+if getattr(sys, "frozen", False):
+    BROWSE_ROOTS = [Path(sys.executable).resolve().parent, DATA_DIR, Path.home()]
+else:
+    BROWSE_ROOTS = [BASE_DIR, BASE_DIR.parent, Path.home()]
 DB_EXTENSIONS = {".db", ".sqlite", ".sqlite3", ".db3"}
 
 for d in (UPLOAD_DIR, BACKUP_DIR):
