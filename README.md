@@ -54,18 +54,20 @@ variable, e.g. `PORT=5060 python server.py`.
 
 The app can also run as a standalone desktop window — no Python install, no
 browser tab — using [pywebview](https://pywebview.flowrl.com/) (Windows
-WebView2) packaged into a single `.exe` with PyInstaller.
+WebView2) packaged with PyInstaller.
 
 - **Run the desktop window in dev:** `pip install pywebview` then
   `python desktop.py`.
-- **Build the `.exe`:** `pip install pyinstaller`, then double-click
-  `build_exe.bat` (or run it from a terminal). The result is
-  `dist\SQLiteBrowser.exe`.
+- **Build the app:** `pip install pyinstaller`, then double-click
+  `build_exe.bat` (or run it from a terminal). The result is the folder
+  `dist\SQLiteBrowser\`; run `dist\SQLiteBrowser\SQLiteBrowser.exe`.
 
 Notes:
 
-- `SQLiteBrowser.exe` is a single-file build, so the **first launch is slow**
-  (it extracts to a temp folder) — subsequent launches are faster.
+- The build is a **one-folder** (`--onedir`) build, not a single `.exe`.
+  pywebview's WebView2 window does not appear from a one-file build, so the
+  whole `dist\SQLiteBrowser` folder must stay together. To hand the app to
+  someone as one item, zip that folder.
 - In the packaged app, user data (`backups/`, `uploads/`, `app_meta.sqlite`)
   lives in `%LOCALAPPDATA%\SQLiteBrowser` so it persists across app updates.
 - Requires the Microsoft **Edge WebView2 runtime** — preinstalled on Windows 11;
